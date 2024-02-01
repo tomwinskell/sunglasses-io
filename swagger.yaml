@@ -1,0 +1,175 @@
+swagger: '2.0'
+info:
+    version: '1.0.0'
+    title: 'E-Commerce API'
+    description: 'API for managing brands, products, and user cart'
+host: 'localhost:3000'
+schemes:
+    - 'http'
+basePath: '/api'
+produces:
+    - 'application/json'
+
+paths:
+    /brands:
+        get:
+            summary: 'Get list of all brands'
+            responses:
+                200:
+                    description: 'A list of brands'
+                    schema:
+                        type: array
+                        items:
+                            $ref: '#/definitions/Brand'
+
+    /brands/{id}/products:
+        get:
+            summary: 'Get list of products for a specific brand'
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  type: integer
+                  description: 'Brand ID'
+            responses:
+                200:
+                    description: 'List of products for the specified brand'
+                    schema:
+                        type: array
+                        items:
+                            $ref: '#/definitions/Product'
+
+    /products:
+        get:
+            summary: 'Get list of all products'
+            responses:
+                200:
+                    description: 'A list of products'
+                    schema:
+                        type: array
+                        items:
+                            $ref: '#/definitions/Product'
+
+    /login:
+        post:
+            summary: 'User login'
+            description: 'Login for the user'
+            parameters:
+                - in: body
+                  name: body
+                  required: true
+                  schema:
+                      $ref: '#/definitions/Login'
+            responses:
+                200:
+                    description: 'Login successful'
+                401:
+                    description: 'Unauthorized'
+
+    /me/cart:
+        get:
+            summary: 'Get user cart'
+            responses:
+                200:
+                    description: 'User shopping cart'
+                    schema:
+                        $ref: '#/definitions/Cart'
+        post:
+            summary: 'Add product to user cart'
+            parameters:
+                - in: body
+                  name: body
+                  required: true
+                  schema:
+                      $ref: '#/definitions/ProductItem'
+            responses:
+                200:
+                    description: 'Product added to cart'
+
+    /me/cart/{productId}:
+        delete:
+            summary: 'Delete a product from the cart'
+            parameters:
+                - name: productId
+                  in: path
+                  required: true
+                  type: integer
+                  description: 'Product ID to delete from cart'
+            responses:
+                200:
+                    description: 'Product deleted from cart'
+        post:
+            summary: 'Change quantity of a product in the cart'
+            parameters:
+                - name: productId
+                  in: path
+                  required: true
+                  type: integer
+                  description: 'Product ID to update in cart'
+                - in: body
+                  name: body
+                  required: true
+                  schema:
+                      $ref: '#/definitions/ProductQuantity'
+            responses:
+                200:
+                    description: 'Product quantity updated in cart'
+
+definitions:
+    Brand:
+        type: object
+        properties:
+            id:
+                type: integer
+            name:
+                type: string
+
+    Product:
+        type: object
+        properties:
+            id:
+                type: integer
+            name:
+                type: string
+            price:
+                type: number
+            brandId:
+                type: integer
+
+    Login:
+        type: object
+        required:
+            - username
+            - password
+        properties:
+            username:
+                type: string
+            password:
+                type: string
+
+    Cart:
+        type: object
+        properties:
+            items:
+                type: array
+                items:
+                    $ref: '#/definitions/ProductItem'
+
+    ProductItem:
+        type: object
+        required:
+            - productId
+            - quantity
+        properties:
+            productId:
+                type: integer
+            quantity:
+                type: integer
+
+    ProductQuantity:
+        type: object
+        required:
+            - quantity
+        properties:
+            quantity:
+                type: integer
