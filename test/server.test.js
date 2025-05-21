@@ -55,6 +55,73 @@ describe('Brands', () => {
   });
 });
 
-describe('Login', () => {});
+describe('Login', () => {
+  it('login success', (done) => {
+    chai
+      .request(server)
+      .post('/api/login')
+      .send({ username: 'yellowleopard753', password: 'jonjon' })
+      .end((err, res) => {
+        res.should.have.status(200);
+        res.body.should.have.property('token').that.is.a('string');
+        done();
+      });
+  });
+
+  it('no username provided', (done) => {
+    chai
+      .request(server)
+      .post('/api/login')
+      .send({ password: 'jonjon' })
+      .end((err, res) => {
+        res.should.have.status(400);
+        res.body.should.have
+          .property('error')
+          .which.equals('Username and password are required');
+        done();
+      });
+  });
+
+  it('no password provided', (done) => {
+    chai
+      .request(server)
+      .post('/api/login')
+      .send({ username: 'yellowleopard753' })
+      .end((err, res) => {
+        res.should.have.status(400);
+        res.body.should.have
+          .property('error')
+          .which.equals('Username and password are required');
+        done();
+      });
+  });
+
+  it('no request body provided', (done) => {
+    chai
+      .request(server)
+      .post('/api/login')
+      .end((err, res) => {
+        res.should.have.status(400);
+        res.body.should.have
+          .property('error')
+          .which.equals('Username and password are required');
+        done();
+      });
+  });
+
+  it('invalid credentials', (done) => {
+    chai
+      .request(server)
+      .post('/api/login')
+      .send({ username: 'invalid', password: 'invalid' })
+      .end((err, res) => {
+        res.should.have.status(401);
+        res.body.should.have
+          .property('error')
+          .which.equals('Invalid credentials');
+        done();
+      });
+  });
+});
 
 describe('Cart', () => {});
