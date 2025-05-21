@@ -15,56 +15,152 @@ paths:
       responses:
         '200':
           description: An array of brands
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Brand'
 
   /brands/{id}/products:
     get:
       summary: Get products by brand
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+          description: Brand ID
+
       responses:
         '200':
-          description: An array of products
+          $ref: '#/components/responses/Products'
+        '404':
+          $ref: '#/components/responses/NotFound'
 
   /products:
     get:
       summary: Get all products
       responses:
         '200':
-          description: An array of products
+          $ref: '#/components/responses/Products'
 
   /login:
     post:
       summary: Login a user
-      reponses:
-        '200':
-          description: Token
+      requestBody:
+        description: Check user credentials and return token
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Login'
 
-  /me/cart:
-    get:
-      summary: Return contents of users cart
       responses:
         '200':
-          description: An array of products
+          description: User token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Token'
+
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /me/cart:
+    security:
+      - bearerAuth: []
+
+    get:
+      summary: Return contents of users cart
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Products'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
 
     post:
       summary: Add product to users cart
+      security:
+        - BearerAuth: []
       responses:
         '200':
-          description: An array of products
+          $ref: '#/components/responses/Products'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
 
   /me/card/{productId}:
+    parameters:
+      - in: path
+        name: productId
+        required: true
+        schema:
+          type: integer
+          minimum: 1
+        description: Product ID
+
     delete:
       summary: Remove product from users cart
+      security:
+        - BearerAuth: []
       responses:
         '200':
-          description: An array of products
+          $ref: '#/components/responses/Products'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
 
-  /me/cart/{productId}:
     post:
       summary: Update quantity of product in users cart
+      security:
+        - BearerAuth: []
       responses:
         '200':
-          description: An array of products
+          $ref: '#/components/responses/Products'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
 
 components:
+  responses:
+    Products:
+      description: An array of products
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/Product'
+
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
   schemas:
     Brand:
       type: object
@@ -73,6 +169,7 @@ components:
           type: integer
         name:
           type: string
+
     Product:
       type: object
       properties:
@@ -90,7 +187,8 @@ components:
           type: array
           items:
             type: string
-    Users:
+
+    User:
       type: object
       properties:
         gender:
@@ -130,14 +228,6 @@ components:
               type: string
             password:
               type: string
-            salt:
-              type: string
-            md5:
-              type: string
-            sha1:
-              type: string
-            sha256:
-              type: string
         dob:
           type: string
           format: date-time
@@ -163,3 +253,31 @@ components:
         nat:
           type: string
           description: Nationality code (e.g., "IE" for Ireland)
+
+    Login:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+      required:
+        - username
+        - password
+
+    Token:
+      type: object
+      properties:
+        token:
+          type: string
+          description: JWT token
+
+    Error:
+      type: object
+      properties:
+        code:
+          type: integer
+          description: Error code
+        message:
+          type: string
+          description: Error message
