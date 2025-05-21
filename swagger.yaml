@@ -37,8 +37,8 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/Products'
-        '404':
-          $ref: '#/components/responses/NotFound'
+        '400':
+          $ref: '#/components/responses/Invalid'
 
   /products:
     get:
@@ -150,6 +150,13 @@ components:
 
     NotFound:
       description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    Invalid:
+      description: Invalid input
       content:
         application/json:
           schema:
@@ -273,5 +280,8 @@ components:
           description: JWT token
 
     Error:
-      type: string
-      description: Error message
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error message
