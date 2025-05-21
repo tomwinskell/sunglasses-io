@@ -1,6 +1,6 @@
 const express = require('express');
 // const bodyParser = require('body-parser');
-const jwt = require('jsonwebtoken');
+// const jwt = require('jsonwebtoken');
 const swaggerUi = require('swagger-ui-express');
 const YAML = require('yamljs');
 const swaggerDocument = YAML.load('./swagger.yaml');
@@ -8,12 +8,14 @@ const app = express();
 
 // Importing routes
 const brandRoutes = require('./routes/brandRoutes');
+const userRoutes = require('./routes/userRoutes');
 
 // Parsing incoming requests
 app.use(express.json());
 
 // Middleware
 app.use('/api', brandRoutes);
+app.use('/api', userRoutes);
 
 // Error handling
 app.use((err, req, res, next) => {
