@@ -15,3 +15,7 @@ exports.fetchProductsByBrandId = (id) => {
   );
   return products.filter((product) => product.categoryId === id);
 };
+
+exports.fetchAllProducts = () => {
+  return JSON.parse(fs.readFileSync('app/data/products.json', 'utf8'));
+};

@@ -10,7 +10,7 @@ describe('Brands', () => {
     chai
       .request(server)
       .get('/api/brands')
-      .end(async (err, res) => {
+      .end((err, res) => {
         res.should.have.status(200);
         res.body.should.be
           .an('array')
@@ -23,7 +23,7 @@ describe('Brands', () => {
     chai
       .request(server)
       .get('/api/brands/1/products')
-      .end(async (err, res) => {
+      .end((err, res) => {
         res.should.have.status(200);
         res.body.should.be.a('array');
         res.body.every((obj) => (obj.categoryId = '1')).should.be.true;
@@ -35,9 +35,21 @@ describe('Brands', () => {
     chai
       .request(server)
       .get('/api/brands/098765/products')
-      .end(async (err, res) => {
+      .end((err, res) => {
         res.should.have.status(400);
         res.body.should.have.property('error').which.equals('Invalid brandId');
+        done();
+      });
+  });
+
+  it('all products in data', (done) => {
+    chai
+      .request(server)
+      .get('/api/products')
+      .end((err, res) => {
+        res.should.have.status(200);
+        res.body.should.be.a('array');
+        res.body.length.should.equals(11);
         done();
       });
   });

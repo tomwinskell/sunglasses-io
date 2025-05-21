@@ -16,3 +16,8 @@ exports.getProductsByBrandId = (req, res) => {
   const products = brandService.fetchProductsByBrandId(brandId);
   res.status(200).json(products);
 };
+
+exports.getAllProducts = (req, res) => {
+  const products = brandService.fetchAllProducts();
+  res.status(200).json(products);
+};
