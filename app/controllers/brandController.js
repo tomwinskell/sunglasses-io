@@ -7,12 +7,12 @@ exports.getAllBrands = (req, res) => {
 
 exports.getProductsByBrandId = (req, res) => {
   // Get brandId from params
-  const brandId = req.params.brandId;
+  const brandId = req.params.id;
   // Confirm valid brandId
   if (!brandService.isValidBrandId(brandId)) {
     return res.status(400).json({ error: 'Invalid brandId' });
   }
-  // Fetch products
-
-  const products = brandService.fetchProductsByBrandId();
-}
+  // Fetch and return products
+  const products = brandService.fetchProductsByBrandId(brandId);
+  res.status(200).json(products);
+};

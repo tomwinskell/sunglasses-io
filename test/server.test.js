@@ -13,7 +13,7 @@ describe('Brands', () => {
       .end(async (err, res) => {
         res.should.have.status(200);
         res.body.should.be
-          .a('array')
+          .an('array')
           .that.include.deep.members([{ id: '1', name: 'Oakley' }]);
         done();
       });
@@ -31,13 +31,13 @@ describe('Brands', () => {
       });
   });
 
-    it('404 not found', (done) => {
+  it('400 invalid brandId', (done) => {
     chai
       .request(server)
       .get('/api/brands/098765/products')
       .end(async (err, res) => {
-        res.should.have.status(404);
-        res.body.should.be.empty;
+        res.should.have.status(400);
+        res.body.should.have.property('error').which.equals('Invalid brandId');
         done();
       });
   });
