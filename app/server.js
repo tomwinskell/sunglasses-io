@@ -1,17 +1,19 @@
 const express = require('express');
-const bodyParser = require('body-parser');
+// const bodyParser = require('body-parser');
 const jwt = require('jsonwebtoken');
 const swaggerUi = require('swagger-ui-express');
 const YAML = require('yamljs');
 const swaggerDocument = YAML.load('./swagger.yaml');
 const app = express();
 
-app.use(bodyParser.json());
+// Importing routes
+const brandRoutes = require('./routes/brandRoutes');
 
-// Importing the data from JSON files
-const users = require('../initial-data/users.json');
-const brands = require('../initial-data/brands.json');
-const products = require('../initial-data/products.json');
+// Parsing incoming requests
+app.use(express.json());
+
+// Middleware
+app.use('/api', brandRoutes);
 
 // Error handling
 app.use((err, req, res, next) => {
