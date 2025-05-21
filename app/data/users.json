@@ -16,7 +16,8 @@
         "email": "susanna.richards@example.com",
         "login": {
             "username": "yellowleopard753",
-            "password": "jonjon"
+            "password": "$2a$12$Sjvx9EiEXtsnuoD4lqsJK.2Gcm0H.h7L.XdfG3IKbBFfsCIkwuSEu",
+            "plainTextPassword": "jonjon"
         },
         "dob": "1954-10-09 10:47:17",
         "registered": "2003-08-03 01:12:24",
@@ -46,7 +47,8 @@
         "email": "salvador.jordan@example.com",
         "login": {
             "username": "lazywolf342",
-            "password": "tucker"
+            "password": "$2a$12$CxrIoyySrOJweYneSPw7..3mm8/ad8zJ.naUnka3gwNPFAu6qdWNu",
+            "plainTextPassword": "tucker"
         },
         "dob": "1955-07-28 22:32:14",
         "registered": "2010-01-10 06:52:31",
@@ -76,7 +78,8 @@
         "email": "natalia.ramos@example.com",
         "login": {
             "username": "greenlion235",
-            "password": "waters"
+            "password": "$2a$12$taObZNIDh6tQ4lQUSNfegutVJX53BFFCAVTWOs/592I7kLsUcttie",
+            "plainTextPassword": "waters"
         },
         "dob": "1947-03-05 15:23:07",
         "registered": "2004-07-19 02:44:19",
