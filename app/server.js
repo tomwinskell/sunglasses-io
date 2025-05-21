@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const jwt = require('jsonwebtoken');
 const swaggerUi = require('swagger-ui-express');
 const YAML = require('yamljs');
-const swaggerDocument = YAML.load('./swagger.yaml'); // Replace './swagger.yaml' with the path to your Swagger file
+const swaggerDocument = YAML.load('./swagger.yaml');
 const app = express();
 
 app.use(bodyParser.json());
@@ -15,8 +15,8 @@ const products = require('../initial-data/products.json');
 
 // Error handling
 app.use((err, req, res, next) => {
-	console.error(err.stack);
-	res.status(500).send('Something broke!');
+  console.error(err.stack);
+  res.status(500).send('Something broke!');
 });
 
 // Swagger
@@ -25,7 +25,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 // Starting the server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-	console.log(`Server running on port ${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });
 
 module.exports = app;
