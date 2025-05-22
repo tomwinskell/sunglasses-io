@@ -9,6 +9,7 @@ const app = express();
 // Importing routes
 const brandRoutes = require('./routes/brandRoutes');
 const userRoutes = require('./routes/userRoutes');
+const cartRoutes = require('./routes/cartRoutes');
 
 // Parsing incoming requests
 app.use(express.json());
@@ -16,6 +17,7 @@ app.use(express.json());
 // Middleware
 app.use('/api', brandRoutes);
 app.use('/api', userRoutes);
+app.use('/api', cartRoutes);
 
 // Error handling
 app.use((err, req, res, next) => {
