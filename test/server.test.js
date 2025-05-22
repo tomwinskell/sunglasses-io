@@ -110,16 +110,17 @@ describe('Login', () => {
 });
 
 describe('Cart', () => {
-  it('access protected route, no token'),
+
+  it('access protected route, no token',
     (done) => {
       agent.get('/api/me/cart').end((err, res) => {
-        res.should.have.status(400);
+        res.should.have.status(401);
         res.body.should.have
           .property('error')
           .which.equals('No token provided');
         done();
       });
-    };
+    });
 
   it('add product to cart', (done) => {
     agent
