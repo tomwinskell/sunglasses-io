@@ -32,7 +32,7 @@ paths:
           schema:
             type: integer
             minimum: 1
-          description: Brand ID
+          description: Brand id
 
       responses:
         '200':
@@ -82,7 +82,7 @@ paths:
         - BearerAuth: []
       responses:
         '200':
-          $ref: '#/components/responses/Products'
+          $ref: '#/components/responses/CartItems'
         '401':
           $ref: '#/components/responses/Unauthorized'
 
@@ -90,13 +90,27 @@ paths:
       summary: Add product to users cart
       security:
         - BearerAuth: []
+      requestBody:
+        description: Product id to be added to cart
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                productId:
+                  $ref: '#/components/schemas/Id'
       responses:
-        '200':
-          $ref: '#/components/responses/Products'
+        '201':
+          $ref: '#/components/responses/CartItem'
+        '400':
+          $ref: '#/components/responses/Invalid'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '409':
+          $ref: '#/components/responses/Invalid'
 
-  /me/card/{productId}:
+  /me/cart/{productId}:
     parameters:
       - in: path
         name: productId
@@ -111,20 +125,34 @@ paths:
       security:
         - BearerAuth: []
       responses:
-        '200':
+        '204':
+          description: Product removed from cart
+        '400':
           $ref: '#/components/responses/Products'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':
           $ref: '#/components/responses/NotFound'
 
-    post:
+    patch:
       summary: Update quantity of product in users cart
       security:
         - BearerAuth: []
+      requestBody:
+        description: New quantity
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                quantity:
+                  $ref: '#/components/schemas/Quantity'
       responses:
         '200':
-          $ref: '#/components/responses/Products'
+          $ref: '#/components/responses/CartItem'
+        '400':
+          $ref: '#/components/responses/Invalid'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':
@@ -132,6 +160,22 @@ paths:
 
 components:
   responses:
+    CartItems:
+      description: An array of cart items
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/CartItem'
+
+    CartItem:
+      description: Successfully added to cart
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CartItem'
+
     Products:
       description: An array of products
       content:
@@ -169,11 +213,19 @@ components:
       bearerFormat: JWT
 
   schemas:
+    Id:
+      type: integer
+      minimum: 1
+
+    Quantity:
+      type: integer
+      minimum: 1
+
     Brand:
       type: object
       properties:
         id:
-          type: integer
+          $ref: '#/components/schemas/Id'
         name:
           type: string
 
@@ -181,9 +233,9 @@ components:
       type: object
       properties:
         id:
-          type: integer
+          $ref: '#/components/schemas/Id'
         categoryId:
-          type: integer
+          $ref: '#/components/schemas/Id'
         name:
           type: string
         description:
@@ -194,6 +246,16 @@ components:
           type: array
           items:
             type: string
+
+    CartItem:
+      type: object
+      properties:
+        productId:
+          $ref: '#/components/schemas/Id'
+        name:
+          type: string
+        quantity:
+          $ref: '#/components/schemas/Quantity'
 
     User:
       type: object
