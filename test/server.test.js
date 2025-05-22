@@ -144,7 +144,7 @@ describe('Cart', () => {
         res.should.have.status(400);
         res.body.should.have
           .property('error')
-          .which.equals('Invalid productId');
+          .which.equals('Invalid request body, valid productId required');
         done();
       });
   });
@@ -157,7 +157,7 @@ describe('Cart', () => {
         res.should.have.status(400);
         res.body.should.have
           .property('error')
-          .which.equals('Invalid request body, expected {productId}');
+          .which.equals('Invalid request body, valid productId required');
         done();
       });
   });

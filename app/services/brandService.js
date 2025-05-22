@@ -16,6 +16,11 @@ exports.fetchProductsByBrandId = (id) => {
   return products.filter((product) => product.categoryId === id);
 };
 
+exports.fetchProductById = (productId) => {
+  const products = this.fetchAllProducts();
+  return products.find((product) => product.id === productId);
+};
+
 exports.fetchAllProducts = () => {
   return JSON.parse(fs.readFileSync('app/data/products.json', 'utf8'));
 };
