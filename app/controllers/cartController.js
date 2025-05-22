@@ -3,7 +3,7 @@ const brandService = require('../services/brandService');
 
 exports.getCartItems = (req, res) => {
   const { sub } = req.user;
-  const cartItems = cartService.fetchCartItems(sub);
+  const cartItems = cartService.fetchUserCart(sub);
   res.status(200).json(cartItems);
 };
 
@@ -13,17 +13,22 @@ exports.postItemToCart = (req, res) => {
   const { productId } = req.body;
   const validProduct = brandService.fetchProductById(productId);
   if (!validProduct) {
-    return res.status(400).json({ error: 'Invalid request body, valid productId required' });
+    return res
+      .status(400)
+      .json({ error: 'Invalid request body, valid productId required' });
   }
   // Check for duplicate cart item
-  if (cartService.duplicateCartItem(sub, productId)) {
+  if (cartService.productIndexInCart(sub, productId) !== -1) {
     return res.status(409).json({ error: 'Product already in cart' });
   }
   // Add product to cart, return added object
-  const addedItem = cartService.postItemToCart(sub, productId);
+  const addedItem = cartService.postUpdateCartItem(sub, productId);
   res.status(201).json(addedItem);
 };
 
-exports.deleteItemFromCart = (req, res) => {};
+exports.updateItemInCart = (req, res) => {
+    // Get brandId from params
+  const productId = req.params.id;
+};
 
-exports.updateItemInCart = (req, res) => {};
+exports.deleteItemFromCart = (req, res) => {};

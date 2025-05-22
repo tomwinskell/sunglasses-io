@@ -4,9 +4,12 @@ const jwtSecret = process.env.JWT_SECRET;
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 
+exports.getAllUserData = () => {
+  return JSON.parse(fs.readFileSync('app/data/users.json', 'utf8'));
+};
+
 exports.getUserByUsername = (username) => {
-  const users = JSON.parse(fs.readFileSync('app/data/users.json', 'utf8'));
-  return users.find((user) => user.login.username === username);
+  return this.getAllUserData().find((user) => user.login.username === username);
 };
 
 exports.comparePassword = (password, hash) => {
