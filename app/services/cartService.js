@@ -30,6 +30,9 @@ exports.returnMutatedCart = (username, productId, mutatedProduct) => {
   if (indexOfProduct !== -1) {
     usersCart = usersCart.filter((item) => item.productId !== productId);
   }
+  if (!mutatedProduct) {
+    return usersCart.filter((item) => item.productId !== productId);
+  }
   return [...usersCart, mutatedProduct];
 };
 
@@ -59,4 +62,20 @@ exports.postUpdateCartItem = (username, productId, quantity) => {
   );
   this.updateStoredCart(username, mutatedCart);
   return mutatedProduct;
+};
+
+exports.deleteCartItem = (username, productId) => {
+  // build mutatedCart without item
+  const mutatedCart = this.returnMutatedCart(username, productId);
+  // write mutatedCart to data
+  this.updateStoredCart(username, mutatedCart);
+  return;
+};
+
+exports.parseJsonInt = (value) => {
+  const num = parseInt(value, 10);
+  if (isNaN(num)) {
+    return null;
+  }
+  return num;
 };
