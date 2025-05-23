@@ -127,8 +127,6 @@ paths:
       responses:
         '204':
           description: Product removed from cart
-        '400':
-          $ref: '#/components/responses/Products'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':
