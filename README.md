@@ -44,9 +44,9 @@ npm run test
 │   ├── server.js
 │   └── authMiddleware.js
 ├── test/
-│   ├── setup.js/
-│   ├── brands.test.js/
-│   ├── cart.test.js/
+│   ├── setup.js
+│   ├── brands.test.js
+│   ├── cart.test.js
 │   └── login.test.js
 ├── .env.example
 ├── swagger.yaml
