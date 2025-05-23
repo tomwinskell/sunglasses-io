@@ -1,112 +1,14 @@
-const chai = require('chai');
-const chaiHttp = require('chai-http');
-const server = require('../app/server'); // Adjust the path as needed
+const shared = require('./setup');
+const { agent, should } = shared;
 
-const should = chai.should();
-chai.use(chaiHttp);
-
-const agent = chai.request.agent(server);
-let jwt;
-
-describe('Brands', () => {
-  it('all brands in data', (done) => {
-    agent.get('/api/brands').end((err, res) => {
-      res.should.have.status(200);
-      res.body.should.be
-        .an('array')
-        .that.include.deep.members([{ id: '1', name: 'Oakley' }]);
+before((done) => {
+  agent
+    .post('/api/login')
+    .send({ username: 'yellowleopard753', password: 'jonjon' })
+    .end((err, res) => {
+      shared.jwt = res.body.token;
       done();
     });
-  });
-
-  it('products for brand id', (done) => {
-    agent.get('/api/brands/1/products').end((err, res) => {
-      res.should.have.status(200);
-      res.body.should.be.a('array');
-      res.body.every((obj) => (obj.categoryId = '1')).should.be.true;
-      done();
-    });
-  });
-
-  it('400 invalid brandId', (done) => {
-    agent.get('/api/brands/098765/products').end((err, res) => {
-      res.should.have.status(400);
-      res.body.should.have.property('error').which.equals('Invalid brandId');
-      done();
-    });
-  });
-
-  it('all products in data', (done) => {
-    agent.get('/api/products').end((err, res) => {
-      res.should.have.status(200);
-      res.body.should.be.a('array');
-      res.body.length.should.equals(11);
-      done();
-    });
-  });
-});
-
-describe('Login', () => {
-  it('login success', (done) => {
-    agent
-      .post('/api/login')
-      .send({ username: 'yellowleopard753', password: 'jonjon' })
-      .end((err, res) => {
-        res.should.have.status(200);
-        res.body.should.have.property('token').that.is.a('string');
-        jwt = res.body.token;
-        done();
-      });
-  });
-
-  it('no username provided', (done) => {
-    agent
-      .post('/api/login')
-      .send({ password: 'jonjon' })
-      .end((err, res) => {
-        res.should.have.status(400);
-        res.body.should.have
-          .property('error')
-          .which.equals('Username and password are required');
-        done();
-      });
-  });
-
-  it('no password provided', (done) => {
-    agent
-      .post('/api/login')
-      .send({ username: 'yellowleopard753' })
-      .end((err, res) => {
-        res.should.have.status(400);
-        res.body.should.have
-          .property('error')
-          .which.equals('Username and password are required');
-        done();
-      });
-  });
-
-  it('no request body provided', (done) => {
-    agent.post('/api/login').end((err, res) => {
-      res.should.have.status(400);
-      res.body.should.have
-        .property('error')
-        .which.equals('Username and password are required');
-      done();
-    });
-  });
-
-  it('invalid credentials', (done) => {
-    agent
-      .post('/api/login')
-      .send({ username: 'invalid', password: 'invalid' })
-      .end((err, res) => {
-        res.should.have.status(401);
-        res.body.should.have
-          .property('error')
-          .which.equals('Invalid credentials');
-        done();
-      });
-  });
 });
 
 describe('Cart', () => {
@@ -121,7 +23,7 @@ describe('Cart', () => {
   it('add product to cart, get user cart to confirm product added', (done) => {
     agent
       .post('/api/me/cart')
-      .set('Authorization', `Bearer ${jwt}`)
+      .set('Authorization', `Bearer ${shared.jwt}`)
       .send({ productId: '1' })
       .end((err, res) => {
         res.should.have.status(201);
@@ -129,7 +31,7 @@ describe('Cart', () => {
         res.body.should.have.property('quantity').that.equals(1);
         agent
           .get('/api/me/cart')
-          .set('Authorization', `Bearer ${jwt}`)
+          .set('Authorization', `Bearer ${shared.jwt}`)
           .end((err, res) => {
             res.should.have.status(200);
             res.body.should.be
@@ -146,7 +48,7 @@ describe('Cart', () => {
   it('add invalid product', (done) => {
     agent
       .post('/api/me/cart')
-      .set('Authorization', `Bearer ${jwt}`)
+      .set('Authorization', `Bearer ${shared.jwt}`)
       .send({ productId: '0' })
       .end((err, res) => {
         res.should.have.status(400);
@@ -160,7 +62,7 @@ describe('Cart', () => {
   it('add with no request body', (done) => {
     agent
       .post('/api/me/cart')
-      .set('Authorization', `Bearer ${jwt}`)
+      .set('Authorization', `Bearer ${shared.jwt}`)
       .end((err, res) => {
         res.should.have.status(400);
         res.body.should.have
@@ -173,7 +75,7 @@ describe('Cart', () => {
   it('add duplicate product', (done) => {
     agent
       .post('/api/me/cart')
-      .set('Authorization', `Bearer ${jwt}`)
+      .set('Authorization', `Bearer ${shared.jwt}`)
       .send({ productId: '1' })
       .end((err, res) => {
         res.should.have.status(409);
@@ -187,7 +89,7 @@ describe('Cart', () => {
   it('add second product', (done) => {
     agent
       .post('/api/me/cart')
-      .set('Authorization', `Bearer ${jwt}`)
+      .set('Authorization', `Bearer ${shared.jwt}`)
       .send({ productId: '2' })
       .end((err, res) => {
         res.should.have.status(201);
@@ -200,7 +102,7 @@ describe('Cart', () => {
   it('two products that were added exist in users cart', (done) => {
     agent
       .get('/api/me/cart')
-      .set('Authorization', `Bearer ${jwt}`)
+      .set('Authorization', `Bearer ${shared.jwt}`)
       .end((err, res) => {
         res.should.have.status(200);
         res.body.should.be.a('array').that.include.deep.members([
@@ -215,7 +117,7 @@ describe('Cart', () => {
   it('update product quantity', (done) => {
     agent
       .patch('/api/me/cart/1')
-      .set('Authorization', `Bearer ${jwt}`)
+      .set('Authorization', `Bearer ${shared.jwt}`)
       .send({ quantity: 3 })
       .end((err, res) => {
         res.should.have.status(200);
@@ -223,7 +125,7 @@ describe('Cart', () => {
         res.body.should.have.property('quantity').that.equals(3);
         agent
           .get('/api/me/cart')
-          .set('Authorization', `Bearer ${jwt}`)
+          .set('Authorization', `Bearer ${shared.jwt}`)
           .end((err, res) => {
             res.should.have.status(200);
             res.body.should.be
@@ -240,7 +142,7 @@ describe('Cart', () => {
   it('update product quantity, no request body', (done) => {
     agent
       .patch('/api/me/cart/1')
-      .set('Authorization', `Bearer ${jwt}`)
+      .set('Authorization', `Bearer ${shared.jwt}`)
       .end((err, res) => {
         res.should.have.status(400);
         res.body.should.have
@@ -253,7 +155,7 @@ describe('Cart', () => {
   it('update product quantity, invalid param', (done) => {
     agent
       .patch('/api/me/cart/098765')
-      .set('Authorization', `Bearer ${jwt}`)
+      .set('Authorization', `Bearer ${shared.jwt}`)
       .end((err, res) => {
         res.should.have.status(404);
         res.body.should.have
@@ -266,7 +168,7 @@ describe('Cart', () => {
   it('delete product from cart, invalid param', (done) => {
     agent
       .delete('/api/me/cart/098765')
-      .set('Authorization', `Bearer ${jwt}`)
+      .set('Authorization', `Bearer ${shared.jwt}`)
       .end((err, res) => {
         res.should.have.status(404);
         res.body.should.have
@@ -279,12 +181,12 @@ describe('Cart', () => {
   it('delete product from cart, confirm deleted', (done) => {
     agent
       .delete('/api/me/cart/1')
-      .set('Authorization', `Bearer ${jwt}`)
+      .set('Authorization', `Bearer ${shared.jwt}`)
       .end((err, res) => {
         res.should.have.status(204);
         agent
           .get('/api/me/cart')
-          .set('Authorization', `Bearer ${jwt}`)
+          .set('Authorization', `Bearer ${shared.jwt}`)
           .end((err, res) => {
             res.should.have.status(200);
             res.body.should.be.a('array');
@@ -297,7 +199,7 @@ describe('Cart', () => {
   it('tidy up, delete other product from cart', (done) => {
     agent
       .delete('/api/me/cart/2')
-      .set('Authorization', `Bearer ${jwt}`)
+      .set('Authorization', `Bearer ${shared.jwt}`)
       .end((err, res) => {
         res.should.have.status(204);
         done();
