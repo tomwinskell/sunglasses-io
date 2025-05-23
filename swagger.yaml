@@ -108,7 +108,7 @@ paths:
         '401':
           $ref: '#/components/responses/Unauthorized'
         '409':
-          $ref: '#/components/responses/Invalid'
+          $ref: '#/components/responses/Conflict'
 
   /me/cart/{productId}:
     parameters:
@@ -119,18 +119,6 @@ paths:
           type: integer
           minimum: 1
         description: Product ID
-
-    delete:
-      summary: Remove product from users cart
-      security:
-        - BearerAuth: []
-      responses:
-        '204':
-          description: Product removed from cart
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '404':
-          $ref: '#/components/responses/NotFound'
 
     patch:
       summary: Update quantity of product in users cart
@@ -151,6 +139,18 @@ paths:
           $ref: '#/components/responses/CartItem'
         '400':
           $ref: '#/components/responses/Invalid'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    delete:
+      summary: Remove product from users cart
+      security:
+        - BearerAuth: []
+      responses:
+        '204':
+          description: Successfully deleted - No content is returned
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':
@@ -199,6 +199,13 @@ components:
 
     Invalid:
       description: Invalid input
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    Conflict:
+      description: Resource conflict
       content:
         application/json:
           schema:
