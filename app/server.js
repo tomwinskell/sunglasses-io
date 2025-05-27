@@ -1,6 +1,4 @@
 const express = require('express');
-// const bodyParser = require('body-parser');
-// const jwt = require('jsonwebtoken');
 const swaggerUi = require('swagger-ui-express');
 const YAML = require('yamljs');
 const swaggerDocument = YAML.load('./swagger.yaml');
